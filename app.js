@@ -17,6 +17,7 @@ app.param(["studentId"], (req, res, next)=>{
     student.id = req.params.studentId;
     student.recordPath = path.join(__dirname, "data", `${student.id}.json`);
     student.propLocation = req.url.split("/").splice(2);
+    student.propName = student.propLocation[student.propLocation.length - 1];
     student.exists = function(){
         if (fs.existsSync(student.recordPath)) {
             return true;
@@ -73,6 +74,25 @@ app.post('/:studentId/*', (req, res, next)=>{
     fs.writeFileSync(record, JSON.stringify(student));
 })
 
+app.delete('/:studentId/*', (req, res, next)=>{
+    if(req.student.exists()){
+        let propLocation = req.student.propLocation;
+        student = req.student.getJSON();
+        let currentProp = student[propLocation[0]];
+        propLocation.forEach((element, i, arr) => {
+            if(i< arr.length - 1 && i!==0){
+                currentProp = currentProp[propLocation[i]];
+            }
+        })
+        let deleted = {};
+        deleted[req.student.propName] = currentProp[req.student.propName];
+        delete currentProp[req.student.propName];
+        fs.writeFileSync(req.student.recordPath, JSON.stringify(student));
+        res.status(200).json(deleted);
+    }else{
+        res.sendStatus(404);
+    }
+})
 
 
 app.listen(PORT, ()=>{
