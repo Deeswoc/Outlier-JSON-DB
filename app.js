@@ -58,20 +58,24 @@ app.post('/:studentId/*', (req, res, next)=>{
     student[propLocation[0]] = {}
     if(req.student.exists()){
         student = req.student.getJSON();
-    }else{
-        newStudent = true;
     }
-    let currentProp = student[propLocation[0]];
-    propLocation.forEach((element, i, arr) => {
-        if(i< arr.length - 1 && i!==0){
-            if(newStudent)
-                currentProp[propLocation[i]] = {};
-            currentProp = currentProp[propLocation[i]];
-        }
-    })
-    currentProp[propLocation[propLocation.length - 1]] = req.body[propLocation[propLocation.length - 1]]
-    res.status(200).send("hello world");
+    let currentProp = student||{};
+    if(propLocation.length!==1){
+        propLocation.forEach((element, i, arr) => {
+            if(i< arr.length - 1){
+                if(!currentProp[propLocation[i]])
+                    currentProp[propLocation[i]] = {};
+                currentProp = currentProp[propLocation[i]];
+            }
+        });
+        currentProp[propLocation[propLocation.length - 1]] = req.body[propLocation[propLocation.length - 1]]
+    }
+    else {
+        currentProp[propLocation[0]] = req.body[req.student.propName];
+    }
     fs.writeFileSync(record, JSON.stringify(student));
+    console.log(currentProp);
+    res.status(200).json(currentProp);
 })
 
 app.delete('/:studentId/*', (req, res, next)=>{
@@ -95,6 +99,9 @@ app.delete('/:studentId/*', (req, res, next)=>{
 })
 
 
-app.listen(PORT, ()=>{
+let server = app.listen(PORT, ()=>{
     console.log("Sever Started")
 })
+
+module.exports = server;
+
