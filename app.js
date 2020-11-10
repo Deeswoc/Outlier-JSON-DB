@@ -60,22 +60,25 @@ app.post('/:studentId/*', (req, res, next)=>{
         student = req.student.getJSON();
     }
     let currentProp = student||{};
-    if(propLocation.length!==1){
-        propLocation.forEach((element, i, arr) => {
-            if(i< arr.length - 1){
-                if(!currentProp[propLocation[i]])
-                    currentProp[propLocation[i]] = {};
-                currentProp = currentProp[propLocation[i]];
-            }
-        });
-        currentProp[propLocation[propLocation.length - 1]] = req.body[propLocation[propLocation.length - 1]]
-    }
-    else {
-        currentProp[propLocation[0]] = req.body[req.student.propName];
-    }
+    propLocation.forEach((element, i, arr) => {
+        if(i< arr.length - 1){
+            if(!currentProp[propLocation[i]])
+                currentProp[propLocation[i]] = {};
+            currentProp = currentProp[propLocation[i]];
+        }
+    });
+    currentProp[propLocation[propLocation.length - 1]] = req.body[propLocation[propLocation.length - 1]]
+
+
+
+    const filtered = Object.keys(currentProp)
+    .filter(key => req.student.propName===key)
+    .reduce((obj, key) => {
+        obj[key] = currentProp[key];
+        return obj;
+    }, {});
     fs.writeFileSync(record, JSON.stringify(student));
-    console.log(currentProp);
-    res.status(200).json(currentProp);
+    res.status(201).json(filtered);
 })
 
 app.delete('/:studentId/*', (req, res, next)=>{

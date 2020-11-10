@@ -1,8 +1,30 @@
 {
+    "name":"Andrew Holness",
     "courses":{
         "calculus":{
             "quizzes":{
-                "ye0ab61":93
+                "ye0ab61":98
+            },
+            "coursework":{
+                "ye01fd4":42,
+                "ye02fd4":80
+            },
+            "teacher":"Nick Cannon"
+        },
+        "physics":{
+            "quizzes":{
+                "finals":88
+            },
+            "labs":{
+                "theoretical":{
+                    "th44":77,
+                    "th99":32
+                },
+                "practical":{
+                    "ptc23":67,
+                    "ptc69":23,
+                    "ptco4":20
+                }
             }
         }
     }
